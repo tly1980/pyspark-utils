@@ -25,7 +25,7 @@ def check_in_table(spark, src, dest):
     )
     src_df.write.insertInto(dest, overwrite=True)
   else:
-    logging.warn('{src} has 0 rows, skip check in'.format(src=src))
+    logging.warn('{src} has 0 rows, skipping check-in'.format(src=src))
 
 
 def check_in_database(spark, src_db, dest_db):
