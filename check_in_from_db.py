@@ -32,7 +32,7 @@ def check_in_database(spark, src_db, dest_db):
   for t in spark.catalog.listTables(src_db):
     src_table = '{}.{}'.format(src_db, t.name)
     dest_table = '{}.{}'.format(dest_db, t.name)
-    check_in_table(src_table, dest_table)
+    check_in_table(spark, src_table, dest_table)
 
 
 def main(args):
@@ -51,7 +51,7 @@ def main(args):
 
   try:
     spark.conf.set("spark.sql.sources.partitionOverwriteMode", args.partitionOverwriteMode)
-    check_in_database(spark, src_db, dest_db)
+    check_in_database(spark, args.src_db, args.dst_db)
   finally:
     if spark:
       spark.sparkContext.stop()

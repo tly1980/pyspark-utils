@@ -1,33 +1,93 @@
-CREATE DATABASE IF NOT EXISTS de_spark_utils;
+CREATE DATABASE IF NOT EXISTS src_db;
 
-CREATE TABLE IF NOT EXISTS de_spark_utils.mor_smkt_str_shopperonecard
+CREATE DATABASE IF NOT EXISTS dest_db;
+
+DROP TABLE IF EXISTS src_db.t1;
+
+DROP TABLE IF EXISTS src_db.t2;
+
+CREATE TABLE IF NOT EXISTS src_db.t1
 (
-shopperid int,
-onecardnumber string,
-isprimary string,
-ss_eff_tmstmp timestamp,
-end_date  timestamp,
-record_deleted_flag string,
-ctl_id  smallint,
-process_name  string,
-process_id  int,
-update_process_name string,
-update_process_id int,
-start_ts  timestamp,
-end_ts  timestamp,
-last_update_date  date,
-insert_date date,
-row_status_ind  string,
-_unload_dt  date,
-_code_ver string,
-_sync_dt_utc  date,
-start_date date
+name STRING,
+P int
 )
 USING PARQUET
-OPTIONS
-(
-  path '.data/mor_smkt_str_shopperonecard'
-)
-PARTITIONED BY (start_date);
+PARTITIONED BY (P);
 
-MSCK REPAIR TABLE de_spark_utils.mor_smkt_str_shopperonecard;
+CREATE TABLE IF NOT EXISTS src_db.t2
+(
+name STRING,
+P int
+)
+USING PARQUET
+PARTITIONED BY (P);
+
+INSERT OVERWRITE TABLE src_db.t1 PARTITION (P=1)
+  VALUES
+('1a'), ('1b');
+
+INSERT OVERWRITE TABLE src_db.t1 PARTITION (P=2)
+  VALUES
+('2c'), ('2d');
+
+INSERT OVERWRITE TABLE src_db.t1 PARTITION (P=4)
+  VALUES
+('4g');
+
+INSERT OVERWRITE TABLE src_db.t2 PARTITION (P=101)
+  VALUES
+('101a'), ('101b');
+
+INSERT OVERWRITE TABLE src_db.t2 PARTITION (P=102)
+  VALUES
+('102a'), ('102b');
+
+INSERT OVERWRITE TABLE src_db.t2 PARTITION (P=104)
+  VALUES
+('104g');
+
+DROP TABLE IF EXISTS dest_db.t1;
+
+DROP TABLE IF EXISTS dest_db.t2;
+
+CREATE TABLE IF NOT EXISTS dest_db.t1
+(
+name STRING,
+P int
+)
+USING PARQUET
+PARTITIONED BY (P);
+
+CREATE TABLE IF NOT EXISTS dest_db.t2
+(
+name STRING,
+P int
+)
+USING PARQUET
+PARTITIONED BY (P);
+
+INSERT OVERWRITE TABLE dest_db.t1 PARTITION (P=1)
+  VALUES
+('__1a'), ('__1b');
+
+INSERT OVERWRITE TABLE dest_db.t1 PARTITION (P=2)
+  VALUES
+('__2c'), ('__2d');
+
+INSERT OVERWRITE TABLE dest_db.t1 PARTITION (P=3)
+  VALUES
+('__3e'), ('__3f');
+
+
+
+INSERT OVERWRITE TABLE dest_db.t2 PARTITION (P=101)
+  VALUES
+('__101a'), ('__101b');
+
+INSERT OVERWRITE TABLE dest_db.t2 PARTITION (P=102)
+  VALUES
+('__102a'), ('__102b');
+
+INSERT OVERWRITE TABLE dest_db.t2 PARTITION (P=103)
+  VALUES
+('__103e'), ('__103f');
